@@ -630,7 +630,7 @@ router.get("/bulk-offers/:sellerId", (req, res) => {
     FROM bulk_offers bo
     LEFT JOIN offer_products op ON bo.id = op.offer_id
     WHERE bo.seller_id = ?
-    GROUP BY bo.id
+    GROUP BY bo.id, bo.offer_name, bo.discount_percentage, bo.created_at
     ORDER BY bo.created_at DESC
   `, [sellerId], (err, offers) => {
     if (err) {

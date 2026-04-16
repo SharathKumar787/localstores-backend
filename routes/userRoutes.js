@@ -283,7 +283,7 @@ router.post("/sync-visit", (req, res) => {
 // 4. PLACE ORDER (Add order with complete product details)
 // 4. PLACE ORDER (Add order with complete product details)
 router.post("/sync-order", (req, res) => {
-  const { phone, productId, name, image, price, shopName, product } = req.body;
+  const { phone, productId, name, image, price, shopName, product, selectedSize, deliveryName, deliveryPhone, deliveryAddress, deliveryLandmark } = req.body;
 
   console.log("📦 PLACE ORDER");
   console.log("  Phone:", phone);
@@ -341,9 +341,14 @@ router.post("/sync-order", (req, res) => {
                           category,
                           description,
                           offer_percentage,
-                          sizes
+                          sizes,
+                          selected_size,
+                          delivery_name,
+                          delivery_phone,
+                          delivery_address,
+                          delivery_landmark
                         ) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?)`;
+                        VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
       const params = [
         phone,                           // user_mobile
@@ -357,7 +362,12 @@ router.post("/sync-order", (req, res) => {
         category || null,                // category
         description || null,             // description
         offerPercentage || 0,            // offer_percentage
-        sizes ? JSON.stringify(sizes) : null  // sizes
+        sizes ? JSON.stringify(sizes) : null,  // sizes
+        selectedSize || null,
+        deliveryName || null,
+        deliveryPhone || null,
+        deliveryAddress || null,
+        deliveryLandmark || null
       ];
 
       console.log("📤 Order SQL params:", params);

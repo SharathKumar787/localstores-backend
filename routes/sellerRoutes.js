@@ -311,6 +311,11 @@ router.get("/orders/:sellerId", (req, res) => {
       o.price,
       o.order_date,
       o.shop_name,
+      o.selected_size,
+      o.delivery_name,
+      o.delivery_phone,
+      o.delivery_address,
+      o.delivery_landmark,
       p.seller_id
     FROM orders o
     JOIN products p ON o.product_id = p.id
@@ -630,7 +635,7 @@ router.get("/bulk-offers/:sellerId", (req, res) => {
     FROM bulk_offers bo
     LEFT JOIN offer_products op ON bo.id = op.offer_id
     WHERE bo.seller_id = ?
-    GROUP BY bo.id
+    GROUP BY bo.id, bo.offer_name, bo.discount_percentage, bo.created_at
     ORDER BY bo.created_at DESC
   `, [sellerId], (err, offers) => {
     if (err) {
@@ -661,7 +666,7 @@ router.get("/all-bulk-offers", (req, res) => {
     JOIN sellers s ON bo.seller_id = s.id
     LEFT JOIN offer_products op ON bo.id = op.offer_id
     WHERE s.is_approved = 1 AND (s.is_deleted IS NULL OR s.is_deleted = 0)
-    GROUP BY bo.id
+    GROUP BY bo.id, bo.offer_name, bo.discount_percentage, bo.shop_name, s.shop_size, s.id, s.shop_logo
     ORDER BY bo.created_at DESC
   `, (err, offers) => {
     if (err) {
@@ -717,7 +722,7 @@ router.get("/all-collections", (req, res) => {
     JOIN sellers s ON c.seller_id = s.id
     JOIN products p ON p.collection_id = c.id
     WHERE s.is_approved = 1 AND (s.is_deleted IS NULL OR s.is_deleted = 0)
-    GROUP BY c.id
+    GROUP BY c.id, c.collection_name, s.shop_name, s.shop_logo, s.id
     HAVING MAX(p.created_at) >= DATE_SUB(NOW(), INTERVAL 15 DAY)
     ORDER BY last_product_added DESC
   `, (err, collections) => {
